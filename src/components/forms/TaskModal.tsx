@@ -110,9 +110,9 @@ export function TaskModal({ isOpen, onClose, defaultProjectId }: TaskModalProps)
                 {...register('status')}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="Pending">Pending</option>
-                <option value="In-Progress">In-Progress</option>
-                <option value="Completed">Completed</option>
+                <option value="Pending" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Pending</option>
+                <option value="In-Progress" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">In-Progress</option>
+                <option value="Completed" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Completed</option>
               </select>
             </div>
 
@@ -124,9 +124,9 @@ export function TaskModal({ isOpen, onClose, defaultProjectId }: TaskModalProps)
                 {...register('priority')}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
+                <option value="Low" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Low</option>
+                <option value="Medium" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Medium</option>
+                <option value="High" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">High</option>
               </select>
             </div>
 
