@@ -100,11 +100,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
 
         if (authErr) {
-          if (authErr.message.includes('Email not confirmed')) {
+          const errMsg = authErr.message.toLowerCase();
+          if (errMsg.includes('email not confirmed')) {
             throw new Error('Your email address has not been confirmed yet. Please check your email inbox for the confirmation link or disable "Confirm Email" in Supabase Auth settings.');
           }
-          if (authErr.message.includes('Invalid login credentials')) {
-            throw new Error('Invalid email or password. Please verify your credentials or register a new account.');
+          if (errMsg.includes('invalid') || authErr.status === 400) {
+            throw new Error('Invalid email or password. If you do not have an account on this live database yet, please click "Sign Up" below to register.');
           }
           throw authErr;
         }
@@ -153,7 +154,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
 
         if (authErr) {
-          if (authErr.message.includes('User already registered')) {
+          if (authErr.message.toLowerCase().includes('already registered')) {
             throw new Error('An account with this email address already exists. Please sign in instead.');
           }
           throw authErr;
