@@ -13,11 +13,8 @@ export function SummaryProgress() {
       {/* Top Banner Row */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+          <h2 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             Operations Overview
-            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
-              Live useMemo Metrics
-            </span>
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Real-time warehouse task completion and project metrics
