@@ -59,10 +59,10 @@ export function FilterBar({
               onChange={(e) => onStatusChange(e.target.value as Status | 'All')}
               className="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
             >
-              <option value="All">All Statuses</option>
-              <option value="Pending">Pending</option>
-              <option value="In-Progress">In-Progress</option>
-              <option value="Completed">Completed</option>
+              <option value="All" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">All Statuses</option>
+              <option value="Pending" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Pending</option>
+              <option value="In-Progress" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">In-Progress</option>
+              <option value="Completed" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Completed</option>
             </select>
           </div>
 
@@ -74,10 +74,10 @@ export function FilterBar({
               onChange={(e) => onPriorityChange(e.target.value as Priority | 'All')}
               className="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
             >
-              <option value="All">All Priorities</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
+              <option value="All" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">All Priorities</option>
+              <option value="High" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">High</option>
+              <option value="Medium" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Medium</option>
+              <option value="Low" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Low</option>
             </select>
           </div>
 
@@ -90,9 +90,9 @@ export function FilterBar({
               onChange={(e) => onSortByChange(e.target.value as any)}
               className="bg-transparent text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none cursor-pointer"
             >
-              <option value="created_at">Date Created</option>
-              <option value="name">Project Name</option>
-              <option value="status">Status</option>
+              <option value="created_at" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Date Created</option>
+              <option value="name" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Project Name</option>
+              <option value="status" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">Status</option>
             </select>
           </div>
 
