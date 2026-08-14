@@ -94,11 +94,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       if (isSupabaseConfigured && supabase) {
-        const { error: authErr } = await supabase.auth.signInWithPassword({
-          email,
+        const { data, error: authErr } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
           password: pass,
         });
-        if (authErr) throw authErr;
+
+        if (authErr) {
+          if (authErr.message.includes('Email not confirmed')) {
+            throw new Error('Your email address has not been confirmed yet. Please check your email inbox for the confirmation link or disable "Confirm Email" in Supabase Auth settings.');
+          }
+          if (authErr.message.includes('Invalid login credentials')) {
+            throw new Error('Invalid email or password. Please verify your credentials or register a new account.');
+          }
+          throw authErr;
+        }
+
+        if (data.session?.user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', data.session.user.id)
+            .single();
+
+          setUser(profile || {
+            id: data.session.user.id,
+            email: data.session.user.email || '',
+            full_name: data.session.user.user_metadata?.full_name || 'Warehouse Manager',
+            role: data.session.user.user_metadata?.role || 'Warehouse Manager',
+          });
+        }
       } else {
         const profile = mockDb.loginUser(email, pass);
         setUser(profile);
@@ -117,8 +141,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setLoading(true);
     try {
       if (isSupabaseConfigured && supabase) {
-        const { error: authErr } = await supabase.auth.signUp({
-          email,
+        const { data, error: authErr } = await supabase.auth.signUp({
+          email: email.trim(),
           password: pass,
           options: {
             data: {
@@ -127,7 +151,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             },
           },
         });
-        if (authErr) throw authErr;
+
+        if (authErr) {
+          if (authErr.message.includes('User already registered')) {
+            throw new Error('An account with this email address already exists. Please sign in instead.');
+          }
+          throw authErr;
+        }
+
+        // Supabase duplicate email check: identities array is empty if user already exists
+        if (data.user && data.user.identities && data.user.identities.length === 0) {
+          throw new Error('An account with this email address already exists. Please sign in instead.');
+        }
+
+        // If email confirmation is required in Supabase, data.session will be null
+        if (data.user && !data.session) {
+          throw new Error('Account created! Please check your email inbox to confirm your account before signing in, OR disable "Confirm email" in Supabase Auth Settings for instant login.');
+        }
+
+        if (data.session?.user) {
+          setUser({
+            id: data.session.user.id,
+            email: data.session.user.email || email,
+            full_name: fullName,
+            role: 'Warehouse Manager',
+          });
+        }
       } else {
         const profile = mockDb.registerUser(fullName, email, role, pass);
         setUser(profile);
