@@ -7,10 +7,139 @@ const STORAGE_KEYS = {
   TASKS: 'warehouse_portal_tasks',
 };
 
-// Clean Fresh State - No Initial Seed Data
-const INITIAL_USERS: (UserProfile & { password_hash: string })[] = [];
-const INITIAL_PROJECTS: Project[] = [];
-const INITIAL_TASKS: Task[] = [];
+// INITIAL DEMO USER & DATA
+const DEMO_USER_ID = 'usr-demo-1';
+
+const INITIAL_USERS: (UserProfile & { password_hash: string })[] = [
+  {
+    id: DEMO_USER_ID,
+    email: 'manager@warehouse.com',
+    full_name: 'Alex Mercer',
+    role: 'Warehouse Manager',
+    password_hash: 'password123',
+    created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
+  },
+];
+
+const INITIAL_PROJECTS: Project[] = [
+  {
+    id: 'proj-demo-1',
+    user_id: DEMO_USER_ID,
+    name: 'Zone A Barcode Scanner Upgrade',
+    description: 'Replace handheld scanners with RFID Bluetooth terminals across Zone A aisles.',
+    status: 'In-Progress',
+    priority: 'High',
+    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+  },
+  {
+    id: 'proj-demo-2',
+    user_id: DEMO_USER_ID,
+    name: 'Cold Storage Temperature Audit',
+    description: 'Quarterly HVAC and IoT sensor audit in Freezer Units #1 through #4.',
+    status: 'Pending',
+    priority: 'High',
+    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+  },
+  {
+    id: 'proj-demo-3',
+    user_id: DEMO_USER_ID,
+    name: 'High-Bay Racking Safety Check',
+    description: 'Structural safety check and load limit verification for Racks 10-24.',
+    status: 'Completed',
+    priority: 'Medium',
+    created_at: new Date(Date.now() - 86400000 * 10).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+  },
+];
+
+const INITIAL_TASKS: Task[] = [
+  {
+    id: 'task-demo-1',
+    project_id: 'proj-demo-1',
+    user_id: DEMO_USER_ID,
+    title: 'Unbox and configure 25 Zebra RFID scanners',
+    description: 'Flash firmware v4.2 and pair with warehouse Wi-Fi network.',
+    status: 'In-Progress',
+    priority: 'High',
+    due_date: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
+    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+  },
+  {
+    id: 'task-demo-2',
+    project_id: 'proj-demo-1',
+    user_id: DEMO_USER_ID,
+    title: 'Train Zone A shift leads on charging dock placement',
+    description: 'Conduct 20-minute safety walk with shift leads.',
+    status: 'Pending',
+    priority: 'Medium',
+    due_date: new Date(Date.now() + 86400000 * 4).toISOString().split('T')[0],
+    created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+  },
+  {
+    id: 'task-demo-3',
+    project_id: 'proj-demo-1',
+    user_id: DEMO_USER_ID,
+    title: 'Decommission legacy 1D laser readers',
+    description: 'Return old barcode units to IT inventory storage.',
+    status: 'Completed',
+    priority: 'Low',
+    due_date: new Date(Date.now() - 86400000 * 1).toISOString().split('T')[0],
+    created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+  },
+  {
+    id: 'task-demo-4',
+    project_id: 'proj-demo-2',
+    user_id: DEMO_USER_ID,
+    title: 'Inspect backup generator battery levels',
+    description: 'Check voltage levels on standby cooling generator.',
+    status: 'Pending',
+    priority: 'High',
+    due_date: new Date(Date.now() + 86400000 * 1).toISOString().split('T')[0],
+    created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+  },
+  {
+    id: 'task-demo-5',
+    project_id: 'proj-demo-2',
+    user_id: DEMO_USER_ID,
+    title: 'Verify IoT wireless gateway connectivity in Unit #3',
+    description: 'Ensure temperature telemetry is reporting every 60 seconds.',
+    status: 'Pending',
+    priority: 'Medium',
+    due_date: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+  },
+  {
+    id: 'task-demo-6',
+    project_id: 'proj-demo-3',
+    user_id: DEMO_USER_ID,
+    title: 'Inspect floor anchor bolts on Rack #12',
+    description: 'Torque check anchor bolts to 120 ft-lbs.',
+    status: 'Completed',
+    priority: 'Medium',
+    due_date: new Date(Date.now() - 86400000 * 3).toISOString().split('T')[0],
+    created_at: new Date(Date.now() - 86400000 * 10).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+  },
+  {
+    id: 'task-demo-7',
+    project_id: 'proj-demo-3',
+    user_id: DEMO_USER_ID,
+    title: 'Replace missing aisle end-guard bumpers',
+    description: 'Install yellow safety bumpers on aisle ends 15 and 16.',
+    status: 'Completed',
+    priority: 'Low',
+    due_date: new Date(Date.now() - 86400000 * 2).toISOString().split('T')[0],
+    created_at: new Date(Date.now() - 86400000 * 9).toISOString(),
+    updated_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+  },
+];
 
 function initStorage() {
   if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
@@ -85,8 +214,9 @@ export const mockDb = {
       (u) => u.email.toLowerCase() === email.toLowerCase() && u.password_hash === pass
     );
     if (!user) {
-      throw new Error('Invalid email or password. Please try again or create an account.');
+      throw new Error('Invalid email or password. Click "Fill Demo Credentials" below to test.');
     }
+
     const profile: UserProfile = {
       id: user.id,
       email: user.email,
@@ -104,7 +234,10 @@ export const mockDb = {
     return projects.filter((p) => p.user_id === userId);
   },
 
-  addProject: (userId: string, data: { name: string; description: string; status: Status; priority: Priority }): Project => {
+  addProject: (
+    userId: string,
+    data: { name: string; description: string; status: Status; priority: Priority }
+  ): Project => {
     const projects: Project[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
     const newProj: Project = {
       id: `proj-${Date.now()}`,
@@ -114,6 +247,7 @@ export const mockDb = {
       status: data.status,
       priority: data.priority,
       created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
     projects.unshift(newProj);
     localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
@@ -124,24 +258,26 @@ export const mockDb = {
     const projects: Project[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
     const index = projects.findIndex((p) => p.id === id);
     if (index === -1) throw new Error('Project not found');
-    projects[index] = {
+
+    const updated = {
       ...projects[index],
       ...updates,
       updated_at: new Date().toISOString(),
     };
+    projects[index] = updated;
     localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
-    return projects[index];
+    return updated;
   },
 
   deleteProject: (id: string) => {
-    let projects: Project[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
-    projects = projects.filter((p) => p.id !== id);
-    localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
+    const projects: Project[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROJECTS) || '[]');
+    const filtered = projects.filter((p) => p.id !== id);
+    localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(filtered));
 
-    // Delete associated tasks
-    let tasks: Task[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS) || '[]');
-    tasks = tasks.filter((t) => t.project_id !== id);
-    localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks));
+    // Also delete associated tasks
+    const tasks: Task[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS) || '[]');
+    const filteredTasks = tasks.filter((t) => t.project_id !== id);
+    localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(filteredTasks));
   },
 
   // Task Operations
@@ -150,7 +286,17 @@ export const mockDb = {
     return tasks.filter((t) => t.user_id === userId);
   },
 
-  addTask: (userId: string, data: { projectId: string; title: string; description?: string; status: Status; priority: Priority; dueDate?: string }): Task => {
+  addTask: (
+    userId: string,
+    data: {
+      projectId: string;
+      title: string;
+      description?: string;
+      status: Status;
+      priority: Priority;
+      dueDate?: string;
+    }
+  ): Task => {
     const tasks: Task[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS) || '[]');
     const newTask: Task = {
       id: `task-${Date.now()}`,
@@ -160,8 +306,9 @@ export const mockDb = {
       description: data.description || '',
       status: data.status,
       priority: data.priority,
-      due_date: data.dueDate,
+      due_date: data.dueDate || undefined,
       created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
     tasks.unshift(newTask);
     localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks));
@@ -172,18 +319,20 @@ export const mockDb = {
     const tasks: Task[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS) || '[]');
     const index = tasks.findIndex((t) => t.id === taskId);
     if (index === -1) throw new Error('Task not found');
-    tasks[index] = {
+
+    const updated = {
       ...tasks[index],
       status,
       updated_at: new Date().toISOString(),
     };
+    tasks[index] = updated;
     localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks));
-    return tasks[index];
+    return updated;
   },
 
   deleteTask: (taskId: string) => {
-    let tasks: Task[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS) || '[]');
-    tasks = tasks.filter((t) => t.id !== taskId);
-    localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(tasks));
+    const tasks: Task[] = JSON.parse(localStorage.getItem(STORAGE_KEYS.TASKS) || '[]');
+    const filtered = tasks.filter((t) => t.id !== taskId);
+    localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(filtered));
   },
 };

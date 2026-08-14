@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Lock, Mail, Eye, EyeOff, Warehouse, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, Warehouse, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { loginSchema, type LoginFormData } from '../../utils/schemas';
 import { useAuth } from '../../hooks/useAuth';
 import { ThemeToggle } from '../common/ThemeToggle';
@@ -22,6 +22,7 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -31,6 +32,12 @@ export function LoginForm() {
       rememberMe: true,
     },
   });
+
+  const handleFillDemo = () => {
+    setValue('email', 'manager@warehouse.com', { shouldValidate: true });
+    setValue('password', 'password123', { shouldValidate: true });
+    setServerError(null);
+  };
 
   const onSubmit = async (data: LoginFormData) => {
     setServerError(null);
@@ -67,6 +74,26 @@ export function LoginForm() {
 
         {/* Login Card */}
         <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none space-y-6">
+          {/* Quick Demo Credentials Box */}
+          <div className="p-3.5 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-800/60 flex items-center justify-between gap-3">
+            <div className="space-y-0.5 min-w-0">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-900 dark:text-indigo-200">
+                <Sparkles className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                <span>Demo Manager Credentials</span>
+              </div>
+              <p className="text-[11px] text-indigo-700/90 dark:text-indigo-300/80 truncate">
+                <span className="font-semibold">manager@warehouse.com</span> | <span className="font-semibold">password123</span>
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleFillDemo}
+              className="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shrink-0 shadow-md shadow-indigo-600/20 transition-all active:scale-95"
+            >
+              Auto-Fill
+            </button>
+          </div>
+
           {/* Registration Success Alert Banner */}
           {isRegisteredSuccess && !serverError && (
             <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-2">
