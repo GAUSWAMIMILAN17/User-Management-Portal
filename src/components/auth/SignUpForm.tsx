@@ -34,7 +34,7 @@ export function SignUpForm() {
     setSubmitting(true);
     try {
       await signUp(data.email, data.password, data.fullName, 'Warehouse Manager');
-      navigate('/dashboard');
+      navigate('/login', { state: { registered: true, email: data.email } });
     } catch (err: any) {
       setServerError(err.message || 'Failed to create account. Please try again.');
     } finally {

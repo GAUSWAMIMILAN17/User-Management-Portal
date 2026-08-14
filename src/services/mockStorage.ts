@@ -76,7 +76,6 @@ export const mockDb = {
       role: newUser.role,
       created_at: newUser.created_at,
     };
-    mockDb.setCurrentUser(profile);
     return profile;
   },
 

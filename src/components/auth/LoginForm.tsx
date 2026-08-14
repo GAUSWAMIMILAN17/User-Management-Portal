@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, useNavigate } from 'react-router-dom';
-import { Lock, Mail, Eye, EyeOff, Warehouse, ArrowRight } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Lock, Mail, Eye, EyeOff, Warehouse, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { loginSchema, type LoginFormData } from '../../utils/schemas';
 import { useAuth } from '../../hooks/useAuth';
 import { ThemeToggle } from '../common/ThemeToggle';
@@ -10,6 +10,11 @@ import { ThemeToggle } from '../common/ThemeToggle';
 export function LoginForm() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isRegisteredSuccess = Boolean(location.state?.registered);
+  const prefilledEmail = location.state?.email || '';
+
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -21,7 +26,7 @@ export function LoginForm() {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
+      email: prefilledEmail,
       password: '',
       rememberMe: true,
     },
@@ -62,6 +67,14 @@ export function LoginForm() {
 
         {/* Login Card */}
         <div className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none space-y-6">
+          {/* Registration Success Alert Banner */}
+          {isRegisteredSuccess && !serverError && (
+            <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <span>Account created successfully! Please sign in with your email and password.</span>
+            </div>
+          )}
+
           {serverError && (
             <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-medium">
               {serverError}

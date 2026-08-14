@@ -170,17 +170,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           throw new Error('Account created! Please check your email inbox to confirm your account before signing in, OR disable "Confirm email" in Supabase Auth Settings for instant login.');
         }
 
-        if (data.session?.user) {
-          setUser({
-            id: data.session.user.id,
-            email: data.session.user.email || email,
-            full_name: fullName,
-            role: 'Warehouse Manager',
-          });
+        if (data.session) {
+          await supabase.auth.signOut();
         }
+        setUser(null);
       } else {
-        const profile = mockDb.registerUser(fullName, email, role, pass);
-        setUser(profile);
+        mockDb.registerUser(fullName, email, role, pass);
+        setUser(null);
       }
     } catch (err: any) {
       const msg = err.message || 'Failed to register account. Please try again.';
