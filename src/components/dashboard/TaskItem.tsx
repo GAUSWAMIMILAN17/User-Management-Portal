@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckSquare, Square, Trash2, Calendar, Clock, X, Check } from 'lucide-react';
+import { CheckSquare, Square, Trash2, Calendar, Clock, X, Check, ChevronDown } from 'lucide-react';
 import type { Task, Status } from '../../types';
 import { useProjects } from '../../hooks/useProjects';
 import { formatDate, getPriorityBadgeStyle } from '../../utils/formatters';
@@ -26,6 +26,15 @@ export function TaskItem({ task }: TaskItemProps) {
 
     try {
       await updateTaskStatus(task.id, nextStatus);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleSelectStatus = async (newStatus: Status) => {
+    setUpdating(true);
+    try {
+      await updateTaskStatus(task.id, newStatus);
     } finally {
       setUpdating(false);
     }
@@ -58,7 +67,7 @@ export function TaskItem({ task }: TaskItemProps) {
           onClick={handleToggleStatus}
           disabled={updating}
           className="mt-0.5 shrink-0 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none transition-colors"
-          title={`Status: ${task.status}. Click to cycle status.`}
+          title={`Status: ${task.status}. Click checkbox to toggle completion.`}
         >
           {isCompleted ? (
             <CheckSquare className="w-5 h-5 text-emerald-500" />
@@ -85,19 +94,35 @@ export function TaskItem({ task }: TaskItemProps) {
               {task.priority}
             </span>
 
-            <button
-              onClick={handleToggleStatus}
-              type="button"
-              className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md transition-all ${
+            {/* Task Interactive Status Select Dropdown Badge */}
+            <div
+              className={`relative inline-flex items-center rounded-md text-[10px] font-bold uppercase tracking-wider border transition-all ${
                 isCompleted
-                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
                   : isInProgress
-                  ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                  : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+                  ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                  : 'bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600'
               }`}
             >
-              {task.status}
-            </button>
+              <select
+                value={task.status}
+                onChange={(e) => handleSelectStatus(e.target.value as Status)}
+                disabled={updating}
+                className="bg-transparent pl-2 pr-5 py-0.5 text-[10px] font-bold uppercase tracking-wider appearance-none cursor-pointer focus:outline-none"
+                title="Click to select task status"
+              >
+                <option value="Pending" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+                  Pending
+                </option>
+                <option value="In-Progress" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+                  In-Progress
+                </option>
+                <option value="Completed" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+                  Completed
+                </option>
+              </select>
+              <ChevronDown className="w-3 h-3 absolute right-1 pointer-events-none opacity-60" />
+            </div>
           </div>
 
           {task.description && (
