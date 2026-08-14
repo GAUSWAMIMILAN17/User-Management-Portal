@@ -23,8 +23,8 @@ The application is engineered specifically for **Warehouse Managers** to manage 
 
 ### Step 1: Clone Repository & Install Dependencies
 ```bash
-git clone <repository-url>
-cd Task
+git clone https://github.com/GAUSWAMIMILAN17/User-Management-Portal.git
+cd User-Management-Portal
 npm install
 ```
 
@@ -51,6 +51,32 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ```bash
 npm run build
 ```
+
+---
+
+## 🌐 Vercel Deployment Process
+
+### 1. Push Code to GitHub
+To push all latest changes to GitHub:
+```bash
+git add .
+git commit -m "Configure Vercel SPA routing and environment setup"
+git push origin main
+```
+
+### 2. Deploy on Vercel
+1. Log in to [Vercel](https://vercel.com).
+2. Click **"Add New..."** -> **"Project"**.
+3. Import your GitHub repository: `GAUSWAMIMILAN17/User-Management-Portal`.
+4. Vercel will automatically detect **Vite** framework settings:
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+5. **Add Environment Variables** (under *Environment Variables* section in Vercel):
+   - Key: `VITE_SUPABASE_URL` | Value: `your_supabase_url`
+   - Key: `VITE_SUPABASE_ANON_KEY` | Value: `your_supabase_anon_key`
+6. Click **"Deploy"**. Vercel will build and publish your project live in seconds!
+
+*(SPA Routing configuration is pre-configured via `vercel.json` so refreshing routes like `/dashboard` or `/login` never returns 404).*
 
 ---
 
@@ -107,6 +133,8 @@ Task/
 │   ├── App.tsx                # Routing & Provider Hierarchy
 │   ├── index.css              # Tailwind CSS Styling Engine
 │   └── main.tsx               # DOM Mounting Entry Point
+├── .env.example               # Environment Variables Template
+├── vercel.json                # Vercel Single Page App rewrite configuration
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
