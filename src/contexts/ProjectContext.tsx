@@ -84,6 +84,43 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     fetchProjectData();
   }, [fetchProjectData]);
 
+  // AUTOMATIC PROJECT STATUS SYNC BASED ON TASK COMPLETION
+  const syncProjectStatusForTasks = useCallback(async (projectId: string, currentTasks: Task[]) => {
+    const projTasks = currentTasks.filter((t) => t.project_id === projectId);
+    if (projTasks.length === 0) return;
+
+    let targetStatus: Status = 'Pending';
+    const allCompleted = projTasks.every((t) => t.status === 'Completed');
+    const hasAnyActive = projTasks.some((t) => t.status === 'Completed' || t.status === 'In-Progress');
+
+    if (allCompleted) {
+      targetStatus = 'Completed';
+    } else if (hasAnyActive) {
+      targetStatus = 'In-Progress';
+    } else {
+      targetStatus = 'Pending';
+    }
+
+    // Check if project status needs update
+    setProjects((prevProjects) => {
+      const targetProj = prevProjects.find((p) => p.id === projectId);
+      if (!targetProj || targetProj.status === targetStatus) return prevProjects;
+
+      // Silently update database in background
+      if (isSupabaseConfigured && supabase) {
+        supabase
+          .from('projects')
+          .update({ status: targetStatus, updated_at: new Date().toISOString() })
+          .eq('id', projectId)
+          .then();
+      } else {
+        mockDb.updateProject(projectId, { status: targetStatus });
+      }
+
+      return prevProjects.map((p) => (p.id === projectId ? { ...p, status: targetStatus } : p));
+    });
+  }, []);
+
   // PROGRESS TRACKING COMPUTATION USING useMemo (REQUIRED BY SPECIFICATION)
   const overallStats = useMemo(() => {
     const totalTasks = tasks.length;
@@ -195,6 +232,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const addTask = async (data: { projectId: string; title: string; description?: string; status: Status; priority: Priority; dueDate?: string }) => {
     if (!user) return;
     try {
+      let createdTask: Task;
       if (isSupabaseConfigured && supabase) {
         const { data: newTask, error: err } = await supabase
           .from('tasks')
@@ -211,11 +249,17 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
           .single();
 
         if (err) throw err;
-        setTasks((prev) => [newTask as Task, ...prev]);
+        createdTask = newTask as Task;
       } else {
-        const newTask = mockDb.addTask(user.id, data);
-        setTasks((prev) => [newTask, ...prev]);
+        createdTask = mockDb.addTask(user.id, data);
       }
+
+      const updatedTasks = [createdTask, ...tasks];
+      setTasks(updatedTasks);
+
+      // Auto Sync Project Status
+      syncProjectStatusForTasks(data.projectId, updatedTasks);
+
       setNotification({ type: 'success', message: `Task "${data.title}" added successfully.` });
     } catch (err: any) {
       const msg = err.message || 'Failed to add task.';
@@ -226,9 +270,13 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const updateTaskStatus = async (taskId: string, status: Status) => {
     const prevTasks = [...tasks];
-    setTasks((current) =>
-      current.map((t) => (t.id === taskId ? { ...t, status } : t))
-    );
+    const updatedTasks = tasks.map((t) => (t.id === taskId ? { ...t, status } : t));
+    setTasks(updatedTasks);
+
+    const targetTask = tasks.find((t) => t.id === taskId);
+    if (targetTask) {
+      syncProjectStatusForTasks(targetTask.project_id, updatedTasks);
+    }
 
     try {
       if (isSupabaseConfigured && supabase) {
@@ -250,6 +298,9 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const deleteTask = async (taskId: string) => {
+    const targetTask = tasks.find((t) => t.id === taskId);
+    const updatedTasks = tasks.filter((t) => t.id !== taskId);
+
     try {
       if (isSupabaseConfigured && supabase) {
         const { error: err } = await supabase.from('tasks').delete().eq('id', taskId);
@@ -257,7 +308,10 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
       } else {
         mockDb.deleteTask(taskId);
       }
-      setTasks((prev) => prev.filter((t) => t.id !== taskId));
+      setTasks(updatedTasks);
+      if (targetTask) {
+        syncProjectStatusForTasks(targetTask.project_id, updatedTasks);
+      }
       setNotification({ type: 'success', message: 'Task deleted successfully.' });
     } catch (err: any) {
       const msg = err.message || 'Failed to delete task.';
